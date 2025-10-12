@@ -1,0 +1,13 @@
+[build]
+builder = "NIXPACKS"
+
+[build.args]
+NIXPACKS_INSTALL_CMD = "npm install"
+NIXPACKS_BUILD_CMD = "npm run build"
+
+[deploy]
+startCommand = "php artisan serve --host=0.0.0.0 --port=$PORT"
+
+[[services]]
+name = "web"
+httpPort = 8000
