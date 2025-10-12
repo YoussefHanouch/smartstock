@@ -6,7 +6,7 @@ use App\Models\Produit;
 use App\Models\Sortie;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Dompdf\Dompdf;
 class sortieController extends Controller
 {
     public function add(){
@@ -17,8 +17,11 @@ class sortieController extends Controller
 
     public function list(){
        $listeSortie = Sortie::Simplepaginate(5);
+       $listsum = Sortie::sum('quantite');
+       $listeSortiecount = Sortie::count();
+
        $listeProduit = Produit::all();
-        return view('sortie.list',['listeSortie'=>$listeSortie, 'listeProduit'=>$listeProduit]);
+        return view('sortie.list',['listeSortie'=>$listeSortie, 'listeProduit'=>$listeProduit,'listeSortiecount'=>$listeSortiecount,'listsum'=>$listsum]);
     }
 
     public function persist(Request $request){
@@ -83,16 +86,13 @@ class sortieController extends Controller
 
 public function pdfsortie($id)
 {
-    // Récupérez les données correspondant à l'ID de la sortie depuis votre modèle
-    $sortie = Sortie::findOrFail($id); // Assurez-vous d'importer le modèle Sortie s'il n'est pas déjà importé
-
-    // Si vous avez correctement récupéré les données, vous pouvez les passer à la vue
-    $pdf = PDF::loadView('pdf.sortie', compact('sortie'));
-
-    // Téléchargez le PDF avec un nom de fichier approprié
-    return $pdf->download('sortie_'.$sortie->id.'.pdf');
+    $sortie = Sortie::findOrFail($id);
+    
+    // Utiliser DomPDF
+    $pdf = Pdf::loadView('pdf.sortie', compact('sortie'));
+    
+    return $pdf->download('facture_'.$sortie->id.'.pdf');
 }
-
 
 
 }

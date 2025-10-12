@@ -12,11 +12,17 @@ class produitController extends Controller
 {
 
 
-    public function list(){
-        $listproduit = Produit::Simplepaginate(5);
-        $listcategorie = Categorie::all();
-        return view('produit.list', ['listproduit'=>$listproduit, 'listcategorie'=>$listcategorie]);
-    }
+   public function list(){
+    $listproduit = Produit::simplePaginate(5);
+    $produitCount = Produit::count(); // Variable différente pour le count
+    $listcategorie = Categorie::all();
+    
+    return view('produit.list', [
+        'listproduit' => $listproduit,
+        'produitCount' => $produitCount,
+        'listcategorie' => $listcategorie
+    ]);
+}
 
 
     public function add(){

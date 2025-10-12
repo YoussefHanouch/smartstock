@@ -1,147 +1,245 @@
 @extends('layouts.app')
 
 @section('sortie')
+<script src="https://cdn.tailwindcss.com"></script>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#667eea',
+                    secondary: '#764ba2',
+                    accent: '#f093fb'
+                }
+            }
+        }
+    }
+</script>
 
 @section('content')
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header  text-white text-center">
-                    <h3 style="color:cornflowerblue">Ajouter une Sortie de Produit</h3>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        
+        <!-- En-tête -->
+        <div class="text-center mb-8">
+            <div class="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class='bx bx-log-out text-3xl text-blue-600'></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">Nouvelle Sortie</h1>
+            <p class="text-gray-600 text-lg">Enregistrez une nouvelle vente ou sortie de produit</p>
+        </div>
+
+        <!-- Carte du formulaire -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            <!-- En-tête de la carte -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
+                <div class="flex items-center space-x-3">
+                    <i class='bx bx-cart text-2xl text-white'></i>
+                    <h2 class="text-xl font-semibold text-white">Détails de la Sortie</h2>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('persistsortieproduit') }}" method="post">
-                        @csrf
-                        <div class="form-group mb-4">
-                            <label for="produit" class="form-label">Produit</label>
-                            <select name="produit" id="produit" class="form-control @error('produit') is-invalid @enderror">
+            </div>
+
+            <!-- Corps du formulaire -->
+            <div class="p-8">
+                <form action="{{ route('persistsortieproduit') }}" method="post">
+                    @csrf
+                    
+                    <div class="space-y-6">
+                        <!-- Produit -->
+                        <div>
+                            <label for="produit" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                <i class='bx bx-package text-blue-500 mr-2'></i>
+                                Produit
+                            </label>
+                            <select name="produit" id="produit" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 @error('produit') border-red-500 @enderror">
                                 @foreach($listeProduit as $p)
                                 <option value="{{ $p->id }}">{{ $p->libelle }}</option>
                                 @endforeach
                             </select>
                             @error('produit')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <div class="flex items-center space-x-2 mt-2 text-red-600 text-sm">
+                                <i class='bx bx-error-circle'></i>
+                                <span>{{ $message }}</span>
+                            </div>
                             @enderror
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="prix" class="form-label">Prix Unitaire</label>
-                            <input type="number" name="prix" min="0" class="form-control @error('prix') is-invalid @enderror" required placeholder="Le prix unitaire ...">
-                            @error('prix')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                        <!-- Prix et Quantité en ligne -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Prix Unitaire -->
+                            <div>
+                                <label for="prix" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class='bx bx-money text-green-500 mr-2'></i>
+                                    Prix Unitaire (DH)
+                                </label>
+                                <input type="number" name="prix" min="0" step="0.01" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 @error('prix') border-red-500 @enderror" 
+                                       required placeholder="0.00"
+                                       oninput="calculateTotal()">
+                                @error('prix')
+                                <div class="flex items-center space-x-2 mt-2 text-red-600 text-sm">
+                                    <i class='bx bx-error-circle'></i>
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                            <!-- Quantité -->
+                            <div>
+                                <label for="quantite" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class='bx bx-layer text-orange-500 mr-2'></i>
+                                    Quantité
+                                </label>
+                                <input type="number" name="quantite" min="1" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 @error('quantite') border-red-500 @enderror" 
+                                       required placeholder="0"
+                                       oninput="calculateTotal()">
+                                @error('quantite')
+                                <div class="flex items-center space-x-2 mt-2 text-red-600 text-sm">
+                                    <i class='bx bx-error-circle'></i>
+                                    <span>{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="quantite" class="form-label">Quantité</label>
-                            <input type="number" name="quantite" min="0" class="form-control @error('quantite') is-invalid @enderror" required placeholder="Quantité à sortir...">
-                            @error('quantite')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                        <!-- Total calculé -->
+                        <div id="totalSection" class="hidden">
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-blue-700 font-semibold">Total:</span>
+                                    <span id="totalAmount" class="text-2xl font-bold text-blue-700">0.00 DH</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="nom_client" class="form-label">Nom Client</label>
-                            <input type="text" name="nom_client" class="form-control @error('nom_client') is-invalid @enderror" required placeholder="Nom du client ...">
+                        <!-- Nom Client -->
+                        <div>
+                            <label for="nom_client" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                <i class='bx bx-user text-purple-500 mr-2'></i>
+                                Nom du Client
+                            </label>
+                            <input type="text" name="nom_client" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 @error('nom_client') border-red-500 @enderror" 
+                                   required placeholder="Entrez le nom du client">
                             @error('nom_client')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <div class="flex items-center space-x-2 mt-2 text-red-600 text-sm">
+                                <i class='bx bx-error-circle'></i>
+                                <span>{{ $message }}</span>
+                            </div>
                             @enderror
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="dateSortie" class="form-label">Date de Sortie</label>
-                            <input type="date" name="dateSortie" class="form-control @error('dateSortie') is-invalid @enderror" required>
+                        <!-- Date de Sortie -->
+                        <div>
+                            <label for="dateSortie" class="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                <i class='bx bx-calendar text-red-500 mr-2'></i>
+                                Date de Sortie
+                            </label>
+                            <input type="date" name="dateSortie" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 @error('dateSortie') border-red-500 @enderror" 
+                                   required>
                             @error('dateSortie')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                            <div class="flex items-center space-x-2 mt-2 text-red-600 text-sm">
+                                <i class='bx bx-error-circle'></i>
+                                <span>{{ $message }}</span>
+                            </div>
                             @enderror
                         </div>
 
+                        <!-- Champ caché user_id -->
                         <input type="hidden" value="{{ Auth::user()->id }}" name="user_id">
-                        <button type="submit" class="btn btn btn-block mt-3" style="background-color:cornflowerblue;color:#ffff">Ajouter</button>
-                    </form>
-                </div>
-               
+
+                        <!-- Bouton de soumission -->
+                        <div class="pt-6">
+                            <button type="submit" 
+                                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center space-x-3">
+                                <i class='bx bx-check-circle text-xl'></i>
+                                <span>Enregistrer la Sortie</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
+
+        <!-- Lien de retour -->
+        <div class="text-center mt-8">
+            <a href="{{ route('listsortie') }}" 
+               class="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                <i class='bx bx-arrow-back'></i>
+                <span>Retour à la liste des sorties</span>
+            </a>
         </div>
     </div>
 </div>
-@endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Définir la date d'aujourd'hui par défaut
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="dateSortie"]').value = today;
+
+        // Animation d'entrée
+        const formCard = document.querySelector('.bg-white');
+        formCard.style.opacity = '0';
+        formCard.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            formCard.style.transition = 'all 0.5s ease-out';
+            formCard.style.opacity = '1';
+            formCard.style.transform = 'translateY(0)';
+        }, 100);
+    });
+
+    function calculateTotal() {
+        const prix = parseFloat(document.querySelector('input[name="prix"]').value) || 0;
+        const quantite = parseInt(document.querySelector('input[name="quantite"]').value) || 0;
+        const total = prix * quantite;
+        
+        const totalSection = document.getElementById('totalSection');
+        const totalAmount = document.getElementById('totalAmount');
+        
+        if (prix > 0 && quantite > 0) {
+            totalAmount.textContent = total.toFixed(2) + ' DH';
+            totalSection.classList.remove('hidden');
+        } else {
+            totalSection.classList.add('hidden');
+        }
+    }
+
+    // Validation en temps réel
+    document.querySelectorAll('input, select').forEach(element => {
+        element.addEventListener('input', function() {
+            if (this.value && this.value.length > 0) {
+                this.classList.remove('border-gray-300');
+                this.classList.add('border-green-500');
+            } else {
+                this.classList.remove('border-green-500');
+                this.classList.add('border-gray-300');
+            }
+        });
+    });
+</script>
 
 <style>
-    .container {
-        max-width: 900px;
-        margin-top: 50px;
+    .bg-gradient-to-br {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
     }
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    
+    .shadow-xl {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
-    .card-header {
-        background-color: #007bff;
-        color: #fff;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-        padding: 20px;
+    
+    .transition-all {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .card-body {
-        padding: 20px;
-    }
-    .form-label {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .form-control {
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        padding: 10px;
-        font-size: 1rem;
-    }
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
-    }
-    .btn {
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    .btn-success {
-        background-color: #28a745;
-        border: none;
-    }
-    .btn-success:hover {
-        background-color: #218838;
-    }
-    .btn-block {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-        margin: 10px 0;
-    }
-    .invalid-feedback {
-        display: block;
-        color: #dc3545;
-        margin-top: 5px;
-    }
-    .card-footer {
-        padding: 10px 20px;
-        background-color: #f8f9fa;
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
-        text-align: center;
+    
+    input:focus, select:focus {
+        outline: none;
+        ring: 2px;
     }
 </style>
+@endsection

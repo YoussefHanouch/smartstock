@@ -1,193 +1,250 @@
 @extends('layouts.app')
 
 @section('sortie')
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Dans la section <head> de votre layout -->
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Tailwind CSS (si utilisé) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap (si utilisé) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#3B82F6',
+                    secondary: '#1E40AF',
+                    success: '#10B981',
+                    warning: '#F59E0B',
+                    danger: '#EF4444',
+                    dark: '#1F2937',
+                }
+            }
+        }
+    }
+</script>
+
 <style>
-       
-    .table-container {
- width: 100%;
- display: flex;
- justify-content: center;
-}
-
-table {
- width: 100%;
- border-collapse: collapse;
- background-color: #fff;
- box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
- border-radius: 10px;
-}
-
-th,
-td {
- padding: 15px;
- text-align: left;
- border-bottom: 1px solid #ddd;
-}
-
-th {
- background-color: #62a1d9;
- color: #fff;
- font-weight: bold;
-}
-
-tr:hover {
- background-color: #f2f2f2;
-}
-
-.actions a,
-.actions button {
- padding: 5px 10px;
- margin-right: 5px;
- border: none;
- border-radius: 5px;
- background-color: #62a1d9;
- color: #fff;
- text-decoration: none;
- cursor: pointer;
- transition: background-color 0.3s ease;
-}
-
-.actions button {
- background-color: #dc3545; /* red color */
-}
-
-.actions a:hover,
-.actions button:hover {
- background-color: #62a1d9; /* dark green color */
-}
-/* Style for the select element */
-select {
- padding: 10px; /* Add padding to the select element */
- border-radius: 5px; /* Add border-radius for rounded corners */
- border: 1px solid #ccc; /* Add border for visual distinction */
- background-color: #fff; /* Set background color */
- color: #333; /* Set text color */
- width: 100%; /* Set width to 100% */
-}
-
-/* Style for the select element when hovered */
-select:hover {
- border-color: #62A1D9; /* Change border color on hover */
-}
-
-/* Style for the select element when focused */
-select:focus {
- outline: none; /* Remove default outline */
- border-color: #62A1D9; /* Change border color when focused */
- box-shadow: 0 0 5px rgba(98, 161, 217, 0.5); /* Add box shadow when focused */
-}
-
-
- .actions a, .actions button {
-     padding: 5px 10px;
-     margin-right: 5px;
-     border: none;
-     border-radius: 5px;
-     background-color: #62A1D9;
-     color: #fff;
-     text-decoration: none;
-     cursor: pointer;
-     transition: background-color 0.3s ease;
- }
-
- .actions button {
-     background-color: #dc3545; /* couleur rouge */
- }
- .ajout{
-     background-color: #62A1D9; 
-     padding: 5px 10px;
-     margin-right: 5px;
-     border: none;
-     border-radius: 5px;
-     background-color: #62A1D9;
-     color: #fff;
-     text-decoration: none;
-     cursor: pointer;
-     transition: background-color 0.3s ease;
- }
- .actions a:hover, .actions button:hover {
-     background-color: #62A1D9; /* couleur vert foncé */
- }
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-2px);
+    }
+    
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 </style>
+
 @section('content')
-@if(!empty($sms))
-<p class="alert alert-success h5" role="alert">
-    {{ $sms }}
-</p>
-@endif
-<div class="container mt-2">
-    <div class="row ">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- En-tête de page -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">📋 Gestion des Sorties</h1>
+            <p class="text-xl text-gray-600">Suivez toutes les factures et sorties de produits</p>
+        </div>
 
-                   <center></center> <h3 class="m-0">Liste des sorties de produits(Factures)</h3>
-                 <button type="button" class="ajout" data-toggle="modal" data-target="#exampleModal">
-                        <a href="/sortie/add" style="color:#fff">  <i class="fa fa-plus"></i> Ajouter</a> 
-                    </button>
-                </div>
+        <!-- Message de succès -->
+        @if(!empty($sms))
+        <div class="bg-green-500 text-white p-4 rounded-2xl shadow-lg mb-6 flex items-center space-x-3 animate-pulse">
+            <i class='bx bx-check-circle text-2xl'></i>
+            <span class="text-lg font-semibold">{{ $sms }}</span>
+        </div>
+        @endif
 
-                <div class="">
-                    <div class="">
-                        <table class="">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Produit</th>
-                                    <th>Quantité</th>
-                                    <th>Prix</th>
-                                    <th>Date de sortie</th>
-                                    <th>Agent</th>
-                                    <th>nom Client</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($listeSortie as $ls)
-                                <tr>
-                                    <td>{{ $ls->id }}</td>
-                                    <td>{{ $ls->nomProduit }}</td>
-                                    <td>{{ $ls->quantite }}</td>
-                                    <td>{{ $ls->prix }}</td>
-                                    <td>{{ $ls->dateSortie }}</td>
-                                    <td>{{ $ls->nameUser }}</td>
-                                    <td>{{ $ls->nom_client }}</td>
-                                    <td style="vertical-align: top;">
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('editsortie',$ls->id) }}" class="btn btn-warning">
-                                                <i class="fa fa-edit align-middle"></i> 
-                                            </a>
-                                            <form action="{{ route('destroysortie', $ls->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger">
-                                                    <i class="fa fa-trash align-middle"></i> 
-                                                </button>
-                                            </form>
-                                            <a href="{{ route('pdfsortie', $ls->id ) }}" class="btn btn-info">
-                                                <i class="fa fa-print align-middle"></i> 
-                                            </a>
-                                        </div>
-                                    </td>
-                                    
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+        <!-- Cartes de statistiques -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover-lift">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Total Factures</p>
+                        <h3 class="text-2xl font-bold text-gray-900">{{ $listeSortiecount }}</h3>
                     </div>
-                    <div class="d-flex justify-content-center">
-                        {{$listeSortie->links()}}
+                    <div class="bg-blue-100 rounded-xl p-3">
+                        <i class='bx bx-receipt text-2xl text-primary'></i>
                     </div>
                 </div>
+            </div>
 
-                <div class="card-footer">
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover-lift">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Produits Vendus</p>
+                        <h3 class="text-2xl font-bold text--900">{{ $listsum}}</h3>
+                    </div>
+                    <div class="bg-green-100 rounded-xl p-3">
+                        <i class='bx bx-package text-2xl text-success'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover-lift">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Chiffre d'Affaires</p>
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            {{ number_format($listeSortie->sum('prix'), 2, ',', ' ') }} DH
+                        </h3>
+                    </div>
+                    <div class="bg-purple-100 rounded-xl p-3">
+                        <i class='bx bx-money text-2xl text-purple-600'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover-lift">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Clients</p>
+                        <h3 class="text-2xl font-bold text-gray-900">{{ $listeSortie->unique('nom_client')->count() }}</h3>
+                    </div>
+                    <div class="bg-orange-100 rounded-xl p-3">
+                        <i class='bx bx-user text-2xl text-warning'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte principale -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- En-tête de la carte -->
+            <div class="bg-gradient-to-r from-primary to-secondary px-6 py-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <h2 class="text-xl font-bold text-white flex items-center space-x-3">
+                        <i class='bx bx-list-ul'></i>
+                        <span>Liste des Factures</span>
+                    </h2>
+                    <a href="/sortie/add" 
+                       class="bg-white text-primary hover:bg-gray-100 px-6 py-2 rounded-xl font-semibold transition-colors duration-200 flex items-center space-x-2">
+                        <i class='bx bx-plus'></i>
+                        <span>Nouvelle Facture</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tableau -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantité</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Prix</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($listeSortie as $ls)
+                        <tr class="hover:bg-gray-50 transition-colors duration-150 group">
+                          
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-primary text-white w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold">
+                                        {{ strtoupper(substr($ls->nomProduit, 0, 1)) }}
+                                    </div>
+                                    <span class="font-medium text-gray-900">{{ $ls->nomProduit }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    {{ $ls->quantite }} unités
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-gray-900">
+                                    {{ number_format($ls->prix, 2, ',', ' ') }} DH
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-gray-600">{{ \Carbon\Carbon::parse($ls->dateSortie)->format('d/m/Y') }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="bg-orange-100 text-warning w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                        {{ strtoupper(substr($ls->nameUser, 0, 1)) }}
+                                    </div>
+                                    <span class="text-gray-700">{{ $ls->nameUser }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    {{ $ls->nom_client }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+    <div class="flex space-x-3 opacity-9 group-hover:opacity-100 transition-opacity duration-300">
+        <a href="{{ route('editsortie',$ls->id) }}" 
+           class="text-gray-400 hover:text-blue-600 p-2 transition-colors duration-200"
+           title="Modifier">
+            <i class='bx bx-edit-alt text-xl'></i>
+        </a>
+        
+        <form action="{{ route('destroysortie', $ls->id) }}" method="POST" class="inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" 
+                    class="text-gray-400 hover:text-red-600 p-2 transition-colors duration-200"
+                    title="Supprimer"
+                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette facture ?')">
+                <i class='bx bx-trash text-xl'></i>
+            </button>
+        </form>
+        
+        <a href="{{ route('pdfsortie', $ls->id ) }}" 
+           class="text-gray-400 hover:text-green-600 p-2 transition-colors duration-200"
+           title="Imprimer PDF">
+            <i class='bx bx-printer text-xl'></i>
+        </a>
+    </div>
+</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pied de tableau -->
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <p class="text-gray-600 text-sm">
+                    </p>
+                    <div class="flex justify-center">
+                        {{ $listeSortie->links() }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des cartes statistiques
+        const statCards = document.querySelectorAll('.hover-lift');
+        statCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
 
-
+        // Confirmation de suppression
+        const deleteForms = document.querySelectorAll('form[method="POST"]');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer cette facture ? Cette action est irréversible.')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
 @endsection
