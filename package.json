@@ -2,10 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite",
-    "build": "npx vite build",
-    "build-railway": "npm install && npx vite build",
-    "build-skip": "echo 'Skipping Vite build' && mkdir -p public/build"
+       "build": "echo 'No frontend build required'",
+    "dev": "echo 'Use Laravel Mix or no build system'"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
