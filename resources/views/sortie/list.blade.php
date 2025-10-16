@@ -122,11 +122,16 @@
                         <i class='bx bx-list-ul'></i>
                         <span>Liste des Factures</span>
                     </h2>
+            @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+          
                     <a href="/sortie/add" 
                        class="bg-white text-primary hover:bg-gray-100 px-6 py-2 rounded-xl font-semibold transition-colors duration-200 flex items-center space-x-2">
                         <i class='bx bx-plus'></i>
                         <span>Nouvelle Facture</span>
                     </a>
+                             @endif
+@endauth
                 </div>
             </div>
 
@@ -141,8 +146,14 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
+                                      @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+          
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-                        </tr>
+                       
+        @endif
+        @endauth
+ </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($listeSortie as $ls)
@@ -184,13 +195,15 @@
                             </td>
                             <td class="px-6 py-4">
     <div class="flex space-x-3 opacity-9 group-hover:opacity-100 transition-opacity duration-300">
+                 @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+          
         <a href="{{ route('editsortie',$ls->id) }}" 
            class="text-gray-400 hover:text-blue-600 p-2 transition-colors duration-200"
            title="Modifier">
             <i class='bx bx-edit-alt text-xl'></i>
         </a>
-        
-        <form action="{{ route('destroysortie', $ls->id) }}" method="POST" class="inline">
+           <form action="{{ route('destroysortie', $ls->id) }}" method="POST" class="inline">
             @csrf
             @method('DELETE')
             <button type="submit" 
@@ -200,12 +213,16 @@
                 <i class='bx bx-trash text-xl'></i>
             </button>
         </form>
+          
+        
         
         <a href="{{ route('pdfsortie', $ls->id ) }}" 
            class="text-gray-400 hover:text-green-600 p-2 transition-colors duration-200"
            title="Imprimer PDF">
             <i class='bx bx-printer text-xl'></i>
         </a>
+                 @endif
+@endauth
     </div>
 </td>
                         </tr>

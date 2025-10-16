@@ -74,55 +74,49 @@ class produitController extends Controller
     }
 
 
-    public function pdfListeProduit(){
-        $produit = Produit::All();
-        $pdf = PDF::loadView('pdf.produit', compact('produit'));
-        return $pdf->download('produit.pdf');
-    }
+// Dans votre contrôleur
+
+public function pdfListeProduit(){
+    // Récupérer les données sans utiliser la relation Eloquent
+    $produits = Produit::all();
+    $categories = Categorie::all()->keyBy('id'); // Crée un tableau indexé par ID
+    // return $produits;
+    $pdf = Pdf::loadView('pdf.produit', compact('produits', 'categories'));
+    return $pdf->download('liste_produits.pdf');
+}
 
 
+public function exportProduitsCSV(){
+    $produits = Produit::with('categorie')->get();
+    
+    $fileName = 'produits_' . date('Y-m-d') . '.csv';
+    
+    $headers = [
+        "Content-type" => "text/csv",
+        "Content-Disposition" => "attachment; filename=$fileName",
+        "Pragma" => "no-cache",
+        "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+        "Expires" => "0"
+    ];
 
+    $callback = function() use ($produits) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, ['ID', 'Nom', 'Catégorie', 'Stock', 'Statut']);
+        
+        foreach ($produits as $produit) {
+            $statut = $produit->stock > 20 ? 'En stock' : ($produit->stock > 0 ? 'Stock faible' : 'Rupture');
+            fputcsv($file, [
+                $produit->id,
+                $produit->libelle,
+                $produit->categorie->nomCategorie ?? 'N/A',
+                $produit->stock,
+                $statut
+            ]);
+        }
+        fclose($file);
+    };
 
-        // // API get list produit
-        // public function getAll(){
-        //     return Produit::all();
-        // }
-    
-        // // API get produit
-        // public function getProduitById($id){
-        //     $p = Produit::find($id);
-        //     if (is_null($p)){
-        //         return \response()->json(['status'=>200, "message"=>"Ce produit n'existe pas "]);
-        //     }else{
-        //         return \response()->json([$p, "message"=>"Voila ton produit"]);
-        //     }
-        // }
-    
-        // // API add produit
-        // public function addProd(Request $request){
-        //     $p = new Produit();
-        //     $p->libelle = $request->libelle;
-        //     $p->categories_id = $request->categorie;
-        //     $p->stock = $request->stock;
-        //     $p->user_id = $request->user_id;
-    
-        //     $result = $p->save();
-        //     if ($result){
-        //         return \response()->json(['status'=>200, 'message'=>'Bon']);
-        //     }
-        // }
-    
-        // // API Update produit
-        // public function updateProd(Request $request, $id){
-    
-        //     $p = Produit::find($id);
-        //     $p->libelle = $request->libelle;
-        //     $p->stock = $request->stock;
-        //     $p->categories_id = $request->categorie;
-        //     $p->user_id = $request->user_id;
-        //     $result = $p->save();
-        //     if ($result){
-        //         return \response()->json(['status'=>200, 'message'=>'Modifier']);
-        //     }
-        // }
+    return response()->stream($callback, 200, $headers);
+}
+
 }

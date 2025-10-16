@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\VisitorDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -22,7 +22,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 */
 
 Route::get('/', function () {
-    return view('login');
+    return view('auth.login');
 });
 
 // Auth::routes();
@@ -95,7 +95,9 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-
+Route::get('/export/produits/pdf', [App\Http\Controllers\produitController::class, 'pdfListeProduit'])->name('pdfListeProduit');
+Route::get('/export/produits/csv', [App\Http\Controllers\produitController::class, 'exportProduitsCSV'])->name('exportProduitsCSV');
+Route::get('/export/produits', [App\Http\Controllers\produitController::class, 'exportProduits'])->name('exportProduits');
 
 
 Route::middleware('guest')->group(function () {
@@ -155,6 +157,14 @@ Route::middleware('auth')->group(function () {
 
 
 
+
+Route::group(['middleware' => ['auth', 'role:visiteur']], function () {
+    Route::get('visitor/dashboard', [VisitorDashboardController::class, 'index'])->name('visitor.dashboard');
+    Route::get('visitor/products', [ProductController::class, 'index'])->name('visitor.products');
+    Route::get('visitor/categories', [CategoryController::class, 'index'])->name('visitor.categories');
+    Route::get('visitor/stock/entries', [StockController::class, 'entries'])->name('visitor.entries');
+    Route::get('visitor/stock/exits', [StockController::class, 'exits'])->name('visitor.exits');
+});
 
 
 

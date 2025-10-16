@@ -15,7 +15,11 @@ class categorieController extends Controller
 
     public function list(){
         $listCategorie = Categorie::all();
-        return view('categorie.list', ['listCategorie'=>$listCategorie]);
+         $latestCategorie = Categorie::latest()->first();
+
+
+        return view('categorie.list', ['listCategorie'=>$listCategorie, 'latestCategorie'=>$latestCategorie]);
+
     }
 
     public function persist(Request $request){

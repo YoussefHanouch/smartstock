@@ -14,24 +14,41 @@ class utilisateurController extends Controller
         return view('utilisateur.list', ['listUser'=>$listUser]);
     }
 
-    public function persist(Request $request){
-        $u = new User();
-        //dd($request);
-        $u->name = $request->name;
-        $u->email = $request->email;
-        $u->role = $request->role; // Assign the selected role to the user object
 
-        if ($request->password_confirmation == $request->password){
-            $u->password = Hash::make($request->password);
-            $u->password;
-            $u->save();
-            $sms = "Opération réussi !!!";
-        }else{
-            $sms = "Les mots de passes ne correspondent pas !!!";
-        }
-        $listUser = User::all();
-        return view('utilisateur.list', ['listUser'=>$listUser, 'sms'=>$sms]);
-    }
+public function persist(Request $request)
+{
+    // ✅ Étape 1 : Validation
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'role' => 'required|string',
+        'password' => 'required|min:6|confirmed',
+    ], [
+        'name.required' => 'Le nom est obligatoire.',
+        'email.required' => "L'adresse e-mail est obligatoire.",
+        'email.email' => "L'adresse e-mail n'est pas valide.",
+        'email.unique' => "Cette adresse e-mail est déjà utilisée.",
+        'role.required' => 'Le rôle est obligatoire.',
+        'password.required' => 'Le mot de passe est obligatoire.',
+        'password.min' => 'Le mot de passe doit contenir au moins 6 caractères.',
+        'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+    ]);
+
+    // ✅ Étape 2 : Création de l’utilisateur
+    $u = new User();
+    $u->name = $validated['name'];
+    $u->email = $validated['email'];
+    $u->role = $validated['role'];
+    $u->password = Hash::make($validated['password']);
+    $u->save();
+
+   return redirect()
+    ->back()
+    ->withErrors($validator)
+    ->withInput();
+
+}
+
 
 
     public function edit($id)

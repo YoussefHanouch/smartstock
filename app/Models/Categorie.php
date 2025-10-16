@@ -11,4 +11,8 @@ class Categorie extends Model
     public static $rules = array('nomCategorie'=>'required∣min:3');
 
     //use HasFactory;
+    
+  public function Produit(){
+    return $this->belongsTo(Produit::class, 'categories_id');
+}
 }

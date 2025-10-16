@@ -2,88 +2,97 @@
 
 @section('prod')
 @section('content')
-<style>
-  /* Style pour le formulaire */
-form {
-    max-width: 600px; /* Largeur maximale du formulaire */
-    margin: 0 auto; /* Centrer le formulaire horizontalement */
-    padding: 20px; /* Ajouter de l'espace à l'intérieur du formulaire */
-    border: 1px solid #ddd; /* Bordure grise */
-    border-radius: 10px; /* Coins arrondis */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
-    background-color: #f9f9f9; /* Couleur de fond */
-}
 
-/* Style pour les labels */
-.form-label {
-    font-weight: bold; /* Texte en gras */
-    color: #333; /* Couleur du texte */
-}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1D4ED8'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen ">
+    <div class="max-w-md mx-auto px-4">
+        <!-- Carte compacte -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <!-- En-tête -->
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-3">
+                    <i class="fas fa-cube text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">Nouveau produit</h1>
+                <p class="text-gray-600 text-sm mt-1">Ajoutez un produit à votre inventaire</p>
+            </div>
 
-/* Style pour les champs de saisie */
-.form-control {
-    border-radius: 5px; /* Coins arrondis */
-    border: 1px solid #ccc; /* Bordure grise */
-    padding: 10px; /* Espacement intérieur */
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /* Ombre interne */
-}
+            <form action="{{ route('persistproduit') }}" method="post">
+                @csrf
+                <input type="hidden" value="{{ Auth::user()->id }}" name="user_id">
 
-/* Style pour le bouton */
-.btn-primary {
-    background-color: #62A1D9; /* Couleur de fond */
-    border: none; /* Supprimer la bordure */
-    color: white; /* Couleur du texte */
-    padding: 10px 20px; /* Espacement intérieur */
-    border-radius: 5px; /* Coins arrondis */
-    cursor: pointer; /* Curseur en main */
-    transition: background-color 0.3s ease; /* Transition pour le changement de couleur */
-}
+                <!-- Nom du produit -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-tag mr-2 text-blue-600"></i>Nom du produit
+                    </label>
+                    <input type="text" 
+                           name="libelle" 
+                           required
+                           class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                           placeholder="Ex: Ordinateur Portable Dell">
+                </div>
 
-.btn-primary:hover {
-    background-color: #4A8EB7; /* Couleur de fond au survol */
-}
+                <!-- Catégorie -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-layer-group mr-2 text-blue-600"></i>Catégorie
+                    </label>
+                    <select name="categorie" 
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                        <option value="" disabled selected>Sélectionnez une catégorie</option>
+                        @foreach($listcategorie as $c)
+                            <option value="{{ $c->id }}">{{ $c->nomCategorie }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-/* Style pour le champ de sélection */
-.select-categorie {
-    border-radius: 5px; /* Coins arrondis */
-    border: 1px solid #ccc; /* Bordure grise */
-    padding: 10px; /* Espacement intérieur */
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /* Ombre interne */
-    width: 100%; /* Largeur à 100% */
-}
+                <!-- Stock -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-boxes mr-2 text-blue-600"></i>Stock initial
+                    </label>
+                    <input type="number" 
+                           name="stock" 
+                           min="0" 
+                           required
+                           class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                           placeholder="0">
+                    <p class="text-xs text-gray-500 mt-1">Quantité disponible en stock</p>
+                </div>
 
-/* Style pour les éléments de formulaire dans des containers */
-.mb-3 {
-    margin-bottom: 1rem; /* Marge inférieure */
-}
+                <!-- Bouton -->
+                <button type="submit" 
+                        name="ajouter" 
+                        value="Ajouter"
+                        class="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow hover:shadow-md flex items-center justify-center">
+                    <i class="fas fa-plus mr-2"></i>
+                    Ajouter le produit
+                </button>
+            </form>
 
-</style>
-<br><br>
-<form action="{{ route('persistproduit') }}" method="post">
-    @csrf
-   <center> <h1 style="color: #4A8EB7">Ajouter un produit</h1></center>
-    <div class="mb-3">
-      <label for="libelle" class="form-label">Nom Produit</label>
-      <input type="text" class="form-control" id="libelle" name="libelle" placeholder="Nom du produit..." required>
+            <!-- Lien de retour -->
+            <div class="text-center mt-4">
+                <a href="{{ route('listproduit') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <i class="fas fa-arrow-left mr-1"></i>
+                    Retour aux produits
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-3">
-      <label for="categorie" class="form-label">Catégorie</label>
-      <select name="categorie" class="form-control select-categorie">
-        <option>Choisir une catégorie ...</option>
-        @foreach($listcategorie as $c)
-            <option value="{{ $c->id }}">{{ $c->nomCategorie }}</option>
-        @endforeach
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="stock" class="form-label">Stock</label>
-      <input type="number" min="0" class="form-control" name="stock" placeholder="Quantité en stock..." required>
-    </div>
-
-    <input type="hidden" value="{{ Auth::user()->id }}" name="user_id">
-
-    <button type="submit" class="btn btn-primary" name="ajouter" value="Ajouter">Ajouter</button>
-</form>
 @endsection

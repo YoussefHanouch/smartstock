@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestionStock - NajiMatique</title>
+    <title>GestionStock - SmartStock</title>
     
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -462,7 +462,7 @@
             <div class="sidebar-header">
                 <a href="#" class="brand">
                     <i class='bx bxs-store-alt'></i>
-                    <span>NajiMatique</span>
+                    <span>SmartStock</span>
                 </a>
             </div>
             
@@ -478,7 +478,11 @@
                     <a href="{{ route('listproduit') }}" class="menu-link">
                         <i class='bx bx-package menu-icon'></i>
                         <span class="menu-text">Produits</span>
-                        <span class="menu-badge">12</span>
+                        <span class="menu-badge">
+                             @php
+                                echo \App\Models\Categorie::count();
+                            @endphp
+                        </span>
                     </a>
                 </div>
                 
@@ -486,6 +490,11 @@
                     <a href="{{ route('listcategorie') }}" class="menu-link">
                         <i class='bx bx-category menu-icon'></i>
                         <span class="menu-text">Catégories</span>
+                          <span class="menu-badge">
+                              @php
+                                echo \App\Models\Categorie::count();
+                            @endphp
+                        </span>
                     </a>
                 </div>
                 
@@ -493,7 +502,11 @@
                     <a href="{{ route('listentree') }}" class="menu-link">
                         <i class='bx bx-log-in menu-icon'></i>
                         <span class="menu-text">Entrées Stock</span>
-                        <span class="menu-badge">3</span>
+                        <span class="menu-badge">
+                              @php
+                                echo \App\Models\Entree::count();
+                            @endphp
+                        </span>
                     </a>
                 </div>
                 
@@ -501,6 +514,11 @@
                     <a href="{{ route('listsortie') }}" class="menu-link">
                         <i class='bx bx-receipt menu-icon'></i>
                         <span class="menu-text">Factures</span>
+                          <span class="menu-badge">
+                              @php
+                                echo \App\Models\Sortie::count();
+                            @endphp
+                        </span>
                     </a>
                 </div>
                 

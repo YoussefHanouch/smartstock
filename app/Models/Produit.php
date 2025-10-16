@@ -3,7 +3,8 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\User;
+use App\Models\Categorie;
 class Produit extends Model
 {
     protected $fillable = array('user_id', 'categories_id', 'libelle', 'stock');
@@ -30,6 +31,17 @@ class Produit extends Model
     public function entrees()
     {
         return $this->hasMany(Entree::class);
+    }
+
+  public function categorie()
+{
+    return $this->belongsTo(Categorie::class, 'categorie_id');
+}
+
+    // Relation avec l'utilisateur (optionnel)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
     //use HasFactory;
 }

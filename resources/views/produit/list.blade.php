@@ -47,6 +47,12 @@
                     <i class='bx bx-download'></i>
                     <span>Exporter PDF</span>
                 </a>
+                <!-- Ajouter le bouton CSV -->
+                <a href="{{ route('exportProduitsCSV') }}" 
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-colors duration-200">
+                    <i class='bx bx-download'></i>
+                    <span>Exporter CSV</span>
+                </a>
             </div>
         </div>
     </div>
@@ -118,18 +124,57 @@
     </div>
 
     <!-- Search -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-            <div class="relative max-w-md">
-                <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
-                <input 
-                    type="text" 
-                    placeholder="Rechercher un produit..." 
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <!-- Carte de recherche et actions -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <!-- Barre de recherche -->
+            <div class="flex-1 relative max-w-md">
+                <div class="relative">
+                    <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl'></i>
+                    <input 
+                        type="text" 
+                        placeholder="Rechercher un produit..." 
+                        class="w-full border border-gray-300 rounded-xl pl-12 pr-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    >
+                    <!-- Indicateur de recherche active -->
+                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <i class="fas fa-sliders-h text-gray-400 hover:text-primary cursor-pointer transition-colors"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton d'action -->
+            <div class="flex items-center space-x-3">
+                <!-- Bouton d'export optionnel -->
+              
+                @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+                <!-- Bouton principal -->
+                <a href="{{ route('addproduit') }}" 
+                   class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover-lift hover:scale-105 transform">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Nouveau produit
+                </a>
+                   @endif
+@endauth
             </div>
         </div>
+
+        <!-- Filtres rapides (optionnel) -->
+        <div class="mt-4 flex flex-wrap gap-2">
+           
+                    @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+                <button class="inline-flex items-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors">
+                <i class="fas fa-filter mr-1"></i>
+                Tous les produits
+            </button>
+                   @endif
+@endauth
+        </div>
     </div>
+</div>
 
     <!-- Products Table -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-12">
@@ -157,7 +202,14 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
+                                      @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+               
+            
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      
+           @endif
+@endauth                 
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -220,6 +272,10 @@
                                     <span class="text-sm text-gray-900">{{ $p->nameUser }}</span>
                                 </div>
                             </td>
+          @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+               
+ 
                             <td class="px-6 py-4">
                                 <div class="flex space-x-2">
                                     <a href="{{ route('editproduit',['id'=> $p->id]) }}" 
@@ -235,6 +291,9 @@
                                     </a>
                                 </div>
                             </td>
+
+                                   @endif
+@endauth
                         </tr>
                         @endforeach
                     </tbody>

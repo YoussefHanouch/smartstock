@@ -80,12 +80,16 @@
                                 <p class="font-semibold text-gray-800">{{ count($listentree) }}</p>
                             </div>
                         </div>
-                    </div>
-                    <button @click="openModal = true" 
+                    </div>          @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+               <button @click="openModal = true" 
                             class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-medium hover-lift shadow-lg hover:shadow-xl transition-all duration-300 flex items-center">
                         <i class="fas fa-plus-circle mr-2"></i>
                         Nouvelle Entrée
                     </button>
+                   @endif
+@endauth
+                    
                 </div>
             </div>
         </div>
@@ -133,9 +137,14 @@
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Agent
                                 </th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
+     @auth
+                        @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+                                
+                                    <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Actions
+                                     </th>
+                                                                @endif
+                    @endauth
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -167,6 +176,10 @@
                                         <div class="text-sm text-gray-900">{{ $e->nameUser }}</div>
                                     </div>
                                 </td>
+                                          @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+               
+    
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex space-x-2">
                                         <a href="{{ route('editentree', ['id'=> $e->id ]) }}" 
@@ -184,6 +197,8 @@
                                                 Supprimer
                                             </button>
                                         </form>
+                                                       @endif
+@endauth
                                     </div>
                                 </td>
                             </tr>

@@ -59,7 +59,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4 md:p-6">
+<body>
     <div class="max-w-7xl mx-auto">
         <!-- En-tête de page -->
         <div class="mb-8 fade-in">
@@ -68,10 +68,16 @@
                     <h1 class="text-3xl font-bold text-gray-800">Gestion des Catégories</h1>
                     <p class="text-gray-600 mt-2">Gérez et organisez vos catégories de produits</p>
                 </div>
+                          @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+               
+     
                 <a href="{{ route('addcategorie') }}" class="mt-4 md:mt-0 inline-flex items-center px-5 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover-lift">
                     <i class="fas fa-plus-circle mr-2"></i>
                     Nouvelle Catégorie
                 </a>
+                              @endif
+@endauth
             </div>
         </div>
 
@@ -111,7 +117,7 @@
                         <i class="fas fa-list-alt text-white text-2xl mr-3"></i>
                         <h2 class="text-xl font-semibold text-white">Liste des Catégories</h2>
                     </div>
-                    <div class="text-white bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                    <div class="text-black bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
                         {{ count($listCategorie) }} catégorie(s)
                     </div>
                 </div>
@@ -136,13 +142,19 @@
                                         <i class="fas fa-sort ml-1 text-gray-400"></i>
                                     </div>
                                 </th>
+                                            @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+          
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
                                 </th>
+         @endif
+@endauth
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($listCategorie as $c)
+                            
                             <tr class="hover:bg-blue-50 transition-colors duration-150 ease-in-out">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">#{{ $c->id }}</div>
@@ -153,6 +165,10 @@
                                         <div class="text-sm font-medium text-gray-900">{{ $c->nomCategorie }}</div>
                                     </div>
                                 </td>
+          @auth
+    @if(auth()->user()->role == 'admin' || auth()->user()->role == 'super_admin')
+          
+        
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex space-x-2">
                                         <a href="{{ route('editcategorie', ['id' => $c->id]) }}" 
@@ -168,7 +184,11 @@
                                         </a>
                                     </div>
                                 </td>
+                                              @endif
+@endauth
+                                
                             </tr>
+                  
                             @endforeach
                         </tbody>
                     </table>
@@ -250,10 +270,13 @@
                     <div class="p-3 rounded-full bg-amber-100 text-amber-600 mr-4">
                         <i class="fas fa-clock text-xl"></i>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Dernière mise à jour</p>
-                        <p class="text-lg font-bold text-gray-900">Aujourd'hui</p>
-                    </div>
+                   <div>
+            <p class="text-sm font-medium text-gray-600">Dernière mise à jour</p>
+            <p class="text-lg font-bold text-gray-900">
+                {{ $latestCategorie->created_at->diffForHumans() }}
+            </p>
+</div>
+
                 </div>
             </div>
         </div>
